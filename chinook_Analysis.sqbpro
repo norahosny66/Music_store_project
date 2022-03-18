@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/noura/Desktop/My Courses/Data analysis/Advanced/chinook-db/chinook_db/chinook.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="125"/><column_width id="3" width="5283"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,5:mainAlbum"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1">-- query 1
+
+select A.Name ArtistName ,count(*) NumberOfAlbums 
+from Artist A join Album B 
+on B.ArtistId= A.ArtistId
+GROUP BY 1
+ORDER BY 2 DESC
+limit 1;
+
+-- query2
+
+select A.Name ArtistName  ,(count(*) / COUNT(DISTINCT B.AlbumId)) as averageTracksPerAlbum
+from Artist A join Album B 
+on B.ArtistId= A.ArtistId
+join Track T on 
+T.AlbumId= B.AlbumId
+GROUP BY A.Name 
+order by averageTracksPerAlbum DESC
+limit 5;
+
+-- query 3
+
+ select sub.ArtistName , sub.Country  from 
+   ( select A.Name ArtistName,I.BillingCountry Country ,COUNT(*) m FROM
+Artist A join Album B 
+on B.ArtistId=A.ArtistId
+join Track T on
+T.AlbumId=B.AlbumId
+join InvoiceLine IL on 
+IL.TrackId=T.TrackId
+join Invoice I on
+IL.InvoiceId=I.InvoiceId
+group by A.Name ,I.BillingCountry 
+order by A.Name , m desc
+) as sub 
+group by sub.ArtistName
+
+-- # variation of query3 that used for visualization
+select sub.ArtistName , sub.Country ,sub.number  from 
+   ( select A.Name ArtistName,I.BillingCountry Country ,COUNT(*) number FROM
+Artist A join Album B 
+on B.ArtistId=A.ArtistId
+join Track T on
+T.AlbumId=B.AlbumId
+join InvoiceLine IL on 
+IL.TrackId=T.TrackId
+join Invoice I on
+IL.InvoiceId=I.InvoiceId
+group by A.Name ,I.BillingCountry 
+order by A.Name , number desc
+) as sub 
+where sub.ArtistName ='Chico Buarque'
+-- ######################
+
+-- query 4
+select s.genre_,s.m from 
+(select A.name Aname ,T.Name TrackName, G.Name genre_, count(*) m  FROM
+Artist A join Album B 
+on B.ArtistId=A.ArtistId
+join Track T on
+T.AlbumId=B.AlbumId
+join Genre G on 
+T.GenreId=G.GenreId
+join InvoiceLine IL on 
+IL.TrackId= T.TrackId
+group by G.name 
+) as s
+group by s.genre_
+order by s.m desc</sql><current_tab id="0"/></tab_sql></sqlb_project>
